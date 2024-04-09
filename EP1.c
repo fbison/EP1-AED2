@@ -253,44 +253,60 @@ void coeficienteDeJaccard(Grafo* g, int v, float* coeficientes){
   }
 }
 
-
+int quantidadeDeVizinhos(Grafo* g, int v){
+  int vizinhos=0;
+  for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+    if (g->matriz[v][possivelVizinho]) {
+      vizinhos++;    
+    }
+  }
+  return vizinhos;
+}
 /* Medida Adamic Adar */
 void AdamicAdar(Grafo* g, int v, float* coeficientes){
-
+  float* valores= (float*) malloc(sizeof(float)* g->numVertices); 
   for (int x=0; x< g->numVertices; x++){
-    int vizinhos=0;
+    float somatorio=0;
     for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      
+      if(x==0){
+        valores[possivelVizinho]= -1;
+      }
       if (g->matriz[v][possivelVizinho] &&
           g->matriz[x][possivelVizinho]) {
-            vizinhos++;    
+            if(valores[possivelVizinho]== -1){
+              float quant=(float)quantidadeDeVizinhos(g, possivelVizinho);   
+              valores[possivelVizinho]= 1/log(quant);
+            }
+            somatorio= somatorio+ valores[possivelVizinho];
       }
-    }
-    float denominador=log10(vizinhos);
-    if(denominador==0){
-      coeficientes[x]=-1;
-      continue;
-    }
-    coeficientes[x]= 1/denominador;
-  }
 
+    }
+    coeficientes[x]= somatorio;
+  }
 }
 
 
 /* Alocacao de Recursos */
 void alocacaoDeRecursos(Grafo* g, int v, float* coeficientes){
+  float* valor= (float*) malloc(sizeof(float)* g->numVertices); 
   for (int x=0; x< g->numVertices; x++){
-    int vizinhos=0;
+    float somatorio=0;
     for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      
+      if(x==0)valor[possivelVizinho]= -1;
+      
       if (g->matriz[v][possivelVizinho] &&
           g->matriz[x][possivelVizinho]) {
-            vizinhos++;    
+            if(valor[possivelVizinho]== -1){
+              float quant=(float)quantidadeDeVizinhos(g, possivelVizinho);   
+              valor[possivelVizinho]= 1/(quant);
+            }
+            somatorio= somatorio+ valor[possivelVizinho];  
       }
+
     }
-    if(vizinhos==0){
-      coeficientes[x]=-1;
-      continue;
-    }
-    coeficientes[x]= 1/(float)(vizinhos);
+    coeficientes[x]= somatorio;
   }
 }
 

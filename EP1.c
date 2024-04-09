@@ -219,72 +219,183 @@ void exibeArranjoInteiros(int* arranjo, int n){
 }
 
 
-
-/* FUNCOES QUE DEVEM SER COMPLETADAS PARA RESOLVER O EP.
-   A DESCRICAO DE CADA FUNCAO ESTA NO ENUNCIADO DO EP.
-   www.each.usp.br/digiampietri/ACH2024/ep1/ep1.pdf        */
-
-/* Vizinhos em Comum */
+/*Adiciona ao array vizinhos quantos vizinhos em comum
+ o índice i tem com o indice v*/
 void vizinhosEmComum(Grafo* g, int v, int* vizinhos){
-
-/* Complete o codigo desta funcao */
-
+  for (int x=0; x< g->numVertices; x++){
+    vizinhos[x]=0;
+    for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      if (g->matriz[v][possivelVizinho] &&
+          g->matriz[x][possivelVizinho]) {
+            vizinhos[x]++;
+          }
+    }
+  }
 }
 
 
 /* Coeficiente de Jaccard */
 void coeficienteDeJaccard(Grafo* g, int v, float* coeficientes){
-
-/* Complete o codigo desta funcao */
-
+  for (int x=0; x< g->numVertices; x++){
+    int intercessaoDeVizinhos= 0;
+    int uniaoDeVizinhos =0;
+    for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      bool eVizinhoDeX=g->matriz[x][possivelVizinho];
+      bool eVizinhoDeV=g->matriz[v][possivelVizinho];
+      if(eVizinhoDeX && eVizinhoDeV) intercessaoDeVizinhos++;
+      if(eVizinhoDeX || eVizinhoDeV) uniaoDeVizinhos++;
+    }
+    if(uniaoDeVizinhos==0){
+      coeficientes[x]=-1;
+      continue;
+    }
+    coeficientes[x]= intercessaoDeVizinhos/(float)uniaoDeVizinhos;
+  }
 }
 
 
 /* Medida Adamic Adar */
 void AdamicAdar(Grafo* g, int v, float* coeficientes){
 
-/* Complete o codigo desta funcao */
+  for (int x=0; x< g->numVertices; x++){
+    int vizinhos=0;
+    for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      if (g->matriz[v][possivelVizinho] &&
+          g->matriz[x][possivelVizinho]) {
+            vizinhos++;    
+      }
+    }
+    float denominador=log10(vizinhos);
+    if(denominador==0){
+      coeficientes[x]=-1;
+      continue;
+    }
+    coeficientes[x]= 1/denominador;
+  }
 
 }
 
 
 /* Alocacao de Recursos */
 void alocacaoDeRecursos(Grafo* g, int v, float* coeficientes){
-
-/* Complete o codigo desta funcao */
-
+  for (int x=0; x< g->numVertices; x++){
+    int vizinhos=0;
+    for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      if (g->matriz[v][possivelVizinho] &&
+          g->matriz[x][possivelVizinho]) {
+            vizinhos++;    
+      }
+    }
+    if(vizinhos==0){
+      coeficientes[x]=-1;
+      continue;
+    }
+    coeficientes[x]= 1/(float)(vizinhos);
+  }
 }
 
 
 /* Similaridade Cosseno */
 void similaridadeCosseno(Grafo* g, int v, float* coeficientes){
-
-/* Complete o codigo desta funcao */
-
+  for (int x=0; x< g->numVertices; x++){
+    int intercessaoDeVizinhos= 0;
+    int vizinhosDeX=0;
+    int vizinhosDeV=0;
+    for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      bool eVizinhoDeX=g->matriz[x][possivelVizinho];
+      bool eVizinhoDeV=g->matriz[v][possivelVizinho];
+      intercessaoDeVizinhos += (eVizinhoDeV && eVizinhoDeX);
+      vizinhosDeX += eVizinhoDeX;
+      vizinhosDeV += eVizinhoDeV;
+    }
+    float denominador= sqrt(vizinhosDeV * (float)vizinhosDeX);
+    if(denominador==0){
+      coeficientes[x]=-1;
+      continue;
+    }
+    coeficientes[x]= intercessaoDeVizinhos/denominador;
+  }
 }
 
 
 /* Coeficiente de Dice */
 void coeficienteDeDice(Grafo* g, int v, float* coeficientes){
 
-/* Complete o codigo desta funcao */
+  for (int x=0; x< g->numVertices; x++){
+    int intercessaoDeVizinhos= 0;
+    int vizinhosDeX=0;
+    int vizinhosDeV=0;
+    for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      bool eVizinhoDeX=g->matriz[x][possivelVizinho];
+      bool eVizinhoDeV=g->matriz[v][possivelVizinho]; 
+      intercessaoDeVizinhos += eVizinhoDeV && eVizinhoDeX;
+      vizinhosDeX += eVizinhoDeX;
+      vizinhosDeV += eVizinhoDeV;
+    }
+    float denominador= vizinhosDeV + vizinhosDeX;
+    if(denominador==0){
+      coeficientes[x]=-1;
+      continue;
+    }
+    coeficientes[x]= 2*intercessaoDeVizinhos/denominador;
+  }
 
 }
 
+int min(int a, int b){
+  if(a>b) return b;
+  return a;
+}
+int max(int a, int b){
+  if(a<b) return b;
+  return a;
+}
 
 /* Hub Promoted Index */
 void HPI(Grafo* g, int v, float* coeficientes){
 
-/* Complete o codigo desta funcao */
+  for (int x=0; x< g->numVertices; x++){
+    int intercessaoDeVizinhos= 0;
+    int vizinhosDeX=0;
+    int vizinhosDeV=0;
+    for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      bool eVizinhoDeX=g->matriz[x][possivelVizinho];
+      bool eVizinhoDeV=g->matriz[v][possivelVizinho];
+      intercessaoDeVizinhos += eVizinhoDeV && eVizinhoDeX;
+      vizinhosDeX += eVizinhoDeX;
+      vizinhosDeV += eVizinhoDeV;
+    }
+    float denominador= (float)min(vizinhosDeV, vizinhosDeX);
+    if(denominador==0){
+      coeficientes[x]=-1;
+      continue;
+    }
+    coeficientes[x]= intercessaoDeVizinhos/denominador;
+  }
 
 }
 
 
 /* Hub Depressed Index */
 void HDI(Grafo* g, int v, float* coeficientes){
-
-/* Complete o codigo desta funcao */
-
+  for (int x=0; x< g->numVertices; x++){
+    int intercessaoDeVizinhos= 0;
+    int vizinhosDeX=0;
+    int vizinhosDeV=0;
+    for(int possivelVizinho=0; possivelVizinho< g->numVertices;possivelVizinho++){
+      bool eVizinhoDeX=g->matriz[x][possivelVizinho];
+      bool eVizinhoDeV=g->matriz[v][possivelVizinho];
+      intercessaoDeVizinhos += eVizinhoDeV && eVizinhoDeX;
+      vizinhosDeX += eVizinhoDeX;
+      vizinhosDeV += eVizinhoDeV;
+    }
+    float denominador= (float)max(vizinhosDeV, vizinhosDeX);
+    if(denominador==0){
+      coeficientes[x]=-1;
+      continue;
+    }
+    coeficientes[x]= intercessaoDeVizinhos/denominador;
+  }
 }
 
 
@@ -502,6 +613,6 @@ int main() {
   printf("Indice HDI de v5:\n");
   HDI(g2, 5, coeficientes);
   exibeArranjoReais(coeficientes, n);
-
+  scanf("%s\n");
   return 0;  
 }

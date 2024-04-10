@@ -234,7 +234,10 @@ void vizinhosEmComum(Grafo* g, int v, int* vizinhos){
 }
 
 
-/* Coeficiente de Jaccard */
+/* Coeficiente de Jaccard 
+Calcula a intercessão e a união de vizinhos de v para cada outro vértice
+Realiza os cálculos do coeficiente no final
+*/
 void coeficienteDeJaccard(Grafo* g, int v, float* coeficientes){
   for (int x=0; x< g->numVertices; x++){
     int intercessaoDeVizinhos= 0;
@@ -262,7 +265,13 @@ int quantidadeDeVizinhos(Grafo* g, int v){
   }
   return vizinhos;
 }
-/* Medida Adamic Adar */
+/* Medida Adamic Adar 
+Encontra os vizinhos em comum de v com outros vértices
+Para cada vértice analisa quantos vizinhos ele tem, e adiciona log(valor)^-1
+Para otimização esse cálculo só é realizado para o vértice x uma vez, mesmo que ele apareça como comum para outros vértices
+Ao invés de zerar o array que guarda esses valores, por calloc, ou num array separado. 
+  Ele são setados dentro do for, para diminuir o número de iterações.
+*/
 void AdamicAdar(Grafo* g, int v, float* coeficientes){
   float* valores= (float*) malloc(sizeof(float)* g->numVertices); 
   for (int x=0; x< g->numVertices; x++){
@@ -272,6 +281,7 @@ void AdamicAdar(Grafo* g, int v, float* coeficientes){
       if(x==0){
         valores[possivelVizinho]= -1;
       }
+
       if (g->matriz[v][possivelVizinho] &&
           g->matriz[x][possivelVizinho]) {
             if(valores[possivelVizinho]== -1){
@@ -287,7 +297,13 @@ void AdamicAdar(Grafo* g, int v, float* coeficientes){
 }
 
 
-/* Alocacao de Recursos */
+/* Alocacao de Recursos 
+Encontra os vizinhos em comum de v com outros vértices
+Para cada vértice analisa quantos vizinhos ele tem, e adiciona (valor)^-1
+Para otimização esse cálculo só é realizado para o vértice x uma vez, mesmo que ele apareça como comum para outros vértices
+Ao invés de zerar o array que guarda esses valores, por calloc, ou num array separado. 
+  Ele são setados dentro do for, para diminuir o número de iterações.
+*/
 void alocacaoDeRecursos(Grafo* g, int v, float* coeficientes){
   float* valor= (float*) malloc(sizeof(float)* g->numVertices); 
   for (int x=0; x< g->numVertices; x++){
@@ -311,7 +327,11 @@ void alocacaoDeRecursos(Grafo* g, int v, float* coeficientes){
 }
 
 
-/* Similaridade Cosseno */
+/* Similaridade Cosseno 
+Calcula a intercessão de vizinhos de v para cada outro vértice, através de cálculos booleanos
+Soma a quantidade de vizinhos de v e cada vértice
+Realiza os cálculos da similaridade no final
+*/
 void similaridadeCosseno(Grafo* g, int v, float* coeficientes){
   for (int x=0; x< g->numVertices; x++){
     int intercessaoDeVizinhos= 0;
@@ -334,7 +354,11 @@ void similaridadeCosseno(Grafo* g, int v, float* coeficientes){
 }
 
 
-/* Coeficiente de Dice */
+/* Coeficiente de Dice 
+Calcula a intercessão de vizinhos de v para cada outro vértice, através de cálculos booleanos
+Soma a quantidade de vizinhos de v e cada vértice
+Realiza os cálculos do coeficiente de dice no final
+*/
 void coeficienteDeDice(Grafo* g, int v, float* coeficientes){
 
   for (int x=0; x< g->numVertices; x++){
@@ -367,7 +391,11 @@ int max(int a, int b){
   return a;
 }
 
-/* Hub Promoted Index */
+/* Hub Promoted Index 
+Calcula a intercessão de vizinhos de v para cada outro vértice, através de cálculos booleanos
+Soma a quantidade de vizinhos de v e cada vértice
+Realiza os cálculos da HPI no final, ultizando a função min
+*/
 void HPI(Grafo* g, int v, float* coeficientes){
 
   for (int x=0; x< g->numVertices; x++){
@@ -392,7 +420,11 @@ void HPI(Grafo* g, int v, float* coeficientes){
 }
 
 
-/* Hub Depressed Index */
+/* Hub Depressed Index  
+Calcula a intercessão de vizinhos de v para cada outro vértice, através de cálculos booleanos
+Soma a quantidade de vizinhos de v e cada vértice
+Realiza os cálculos da HDI no final, ultizando a função max
+*/
 void HDI(Grafo* g, int v, float* coeficientes){
   for (int x=0; x< g->numVertices; x++){
     int intercessaoDeVizinhos= 0;

@@ -285,8 +285,14 @@ void AdamicAdar(Grafo* g, int v, float* coeficientes){
       if (g->matriz[v][possivelVizinho] &&
           g->matriz[x][possivelVizinho]) {
             if(valores[possivelVizinho]== -1){
-              float quant=(float)quantidadeDeVizinhos(g, possivelVizinho);   
-              valores[possivelVizinho]= 1/log(quant);
+              float quant=(float)quantidadeDeVizinhos(g, possivelVizinho); 
+              float denominador= log(quant);
+              if(denominador==0){
+                somatorio=-1;
+                break;
+              }else{
+                valores[possivelVizinho]= 1/denominador;
+              }
             }
             somatorio= somatorio+ valores[possivelVizinho];
       }
